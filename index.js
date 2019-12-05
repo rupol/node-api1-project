@@ -22,15 +22,30 @@ app.post("/api/users", (req, res) => {
     updated_at: Date()
   };
 
-  db.insert(newUser).catch(err => {
-    return res.status(500).json({
-      errorMessage: "There was an error while saving the user to the database"
+  db.insert(newUser)
+    .then(id => {
+      res.status(201).json({ user: newUser, id: id });
+    })
+    .catch(err => {
+      return res.status(500).json({
+        errorMessage:
+          "There was an error while saving the user to the database."
+      });
     });
-  });
-  res.status(201).json(newUser);
 });
 
 // GET api/users
+app.get("/api/users", (req, res) => {
+  db.find()
+    .then(users => {
+      res.json(users);
+    })
+    .catch(err => {
+      return res.status(500).json({
+        errorMessage: "The users information could not be retrieved."
+      });
+    });
+});
 
 // GET api/users:id
 
