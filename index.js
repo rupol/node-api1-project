@@ -17,9 +17,7 @@ app.post("/api/users", (req, res) => {
 
   const newUser = {
     name: req.body.name,
-    bio: req.body.bio,
-    created_at: Date(),
-    updated_at: Date()
+    bio: req.body.bio
   };
 
   db.insert(newUser)
@@ -86,6 +84,42 @@ app.delete("/api/users/:id", (req, res) => {
 });
 
 // PUT api/users/:id
+app.put("/api/users/:id", (req, res) => {
+  if (!req.body.name || !req.body.bio) {
+    return res
+      .status(400)
+      .json({ errorMessage: "Please provide name and bio for the user." });
+  }
+
+  const newUser = {
+    name: req.body.name,
+    bio: req.body.bio
+  };
+
+  db.update(req.params.id, newUser)
+    .then(num => {
+      if (num) {
+        db.findById(req.params.id)
+          .then(user => {
+            res.json(user);
+          })
+          .catch(err => {
+            return res.status(500).json({
+              errorMessage: "The user information could not be retrieved."
+            });
+          });
+      } else {
+        res
+          .status(404)
+          .json({ message: "The user with the specified ID does not exist." });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({
+        errorMessage: "The user information could not be modified."
+      });
+    });
+});
 
 //////// SERVER INIT ////////
 const port = 8080;
