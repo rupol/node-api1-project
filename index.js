@@ -47,7 +47,24 @@ app.get("/api/users", (req, res) => {
     });
 });
 
-// GET api/users:id
+// GET api/users/:id
+app.get("/api/users/:id", (req, res) => {
+  db.findById(req.params.id)
+    .then(user => {
+      if (user) {
+        res.json(user);
+      } else {
+        res
+          .status(404)
+          .json({ error: "The user with the specified ID does not exist." });
+      }
+    })
+    .catch(err => {
+      return res.status(500).json({
+        errorMessage: "The user information could not be retrieved."
+      });
+    });
+});
 
 // DELETE api/users/:id
 
